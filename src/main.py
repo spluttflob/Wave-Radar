@@ -116,3 +116,6 @@ except KeyboardInterrupt:
 gps_power_pin.value(0)
 asyncio.new_event_loop()
 print("Test finished.")
+
+
+

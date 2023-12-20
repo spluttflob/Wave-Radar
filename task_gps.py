@@ -11,7 +11,8 @@
 #  @date   2022-Dec-30 Cleaned up and put things into a class
 #  @date   2023-Nov-20 Modifying to not use SD card task and try other GPSes
 #  @date   2023-Dec-08 Changed some pins for wave radar
-#  @copyright (c) 2020-2-23 by JR Ridgely and released under the GNU Public
+#  @date   2023-Dec-14 Removed navigation stuff that isn't needed for radar
+#  @copyright (c) 2020-2023 by JR Ridgely and released under the GNU Public
 #          License V3.
 
 from machine import Pin, UART, SDCard
@@ -39,10 +40,6 @@ GPS_RXD_PIN = 32
 ## The number of the GPIO pin used to turn the GPS on and off with a MOSFET
 GPS_POWER_PIN = 15
 
-## Add a new way to return latitude and longitude: signed decimal degrees which
-#  work for calculations of distance and bearing to a mark
-SDD = const(100)
-
 
 ## This extension of the AS_GPS class adds the ability to compute the range
 #  and bearing to a mark as well as miscellaneous refinements.
@@ -55,13 +52,9 @@ class Boatsie_GPS(as_GPS.AS_GPS):
 
         # Set up the parent class object
         super().__init__(asyncio.StreamReader(uart), local_offset=LOCAL_OFFSET)
-                         # , fix_cb=gps_callback)
 
         ## A saved copy of the UART can be used to turn the UART off
         self._uart = uart
-
-        ## The name of the mark, or None if we don't have a destination
-        self.mark_name = None
 
         ## The pin used to control the GPS's power, or None if the GPS is
         #  always on and the power pin isn't used
@@ -92,48 +85,6 @@ class Boatsie_GPS(as_GPS.AS_GPS):
     ## Turn off the UART to save power
     def uart_off(self):
         self._uart.deinit()
-
-
-    ## This overridden method adds the Signed Decimal Degrees format for
-    #  latitude. Code for the other formats is copied from the parent class.
-    #  @param coord_format The format for coordinates, default a signed number
-    def latitude(self, coord_format=SDD):
-        if coord_format == SDD:
-            signed_degrees = self._latitude[0] + (self._latitude[1] / 60)
-            if self._latitude[2] == 'S':
-                signed_degrees = -signed_degrees
-            return signed_degrees
-        elif coord_format == as_GPS.DD:
-            decimal_degrees = self._latitude[0] + (self._latitude[1] / 60)
-            return [decimal_degrees, self._latitude[2]]
-        elif coord_format == as_GPS.DMS:
-            mins = int(self._latitude[1])
-            seconds = round((self._latitude[1] - mins) * 60)
-            return [self._latitude[0], mins, seconds, self._latitude[2]]
-        elif coord_format == as_GPS.DM:
-            return self._latitude
-        raise ValueError('Unknown latitude format.')
-
-
-    ## This overridden method adds the Signed Decimal Degrees format for
-    #  longitude. Code for the other formats is copied from the parent class.
-    #  @param coord_format The format for coordinates, default a signed number
-    def longitude(self, coord_format=SDD):
-        if coord_format == SDD:
-            signed_degrees = self._longitude[0] + (self._longitude[1] / 60)
-            if self._longitude[2] == 'W':
-                signed_degrees = -signed_degrees
-            return signed_degrees
-        elif coord_format == as_GPS.DD:
-            decimal_degrees = self._longitude[0] + (self._longitude[1] / 60)
-            return [decimal_degrees, self._longitude[2]]
-        elif coord_format == as_GPS.DMS:
-            mins = int(self._longitude[1])
-            seconds = round((self._longitude[1] - mins) * 60)
-            return [self._longitude[0], mins, seconds, self._longitude[2]]
-        elif coord_format == as_GPS.DM:
-            return self._longitude
-        raise ValueError('Unknown longitude format.')
 
 
 ## The one and only GPS object, which will be instantiated when the task is

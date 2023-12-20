@@ -1,6 +1,10 @@
 # Wave-Radar
 Using a radar to help researchers characterize ocean waves... on a shoestring.
 
+_Clarification: Not waves in a vibrating shoestring.  Ocean waves (and tides)
+being measured with a shoestring budget. Hopefully that detail has been cleared
+up now._
+
 ## Background
 This project builds on the Masters thesis work of Dunn (thesis expected to be 
 published soon, but hung up in administrative font-checking as of the time of
@@ -45,6 +49,7 @@ In `src/acconeer/` is a slightly altered `main.c` which was used to build a
 modified version of each example file.  The baud rate used to transmit readings
 from the radar to the ESP32 microcontroller is lowered to 115200 on this
 version.  The slower baud rate helps to ensure reliable communications. 
+This `main.c` lives in the `Src` folder of the XM125 firmware source tree.
 
 For those who would rather flash an existing firmware file, a copy of  
 `example_detector_distance_low_power_hibernate.bin`  
