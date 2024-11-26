@@ -19,7 +19,7 @@ an ultrasonic sonar.
 ## Hardware
 
 ### Bill O' Materials
-There is a work-in-progress BOM in this directory.  It has been made in
+There is a work-in-progress BOM in the `elec` directory.  It has been made in
 November 2024 and will probably be out of date in a few months or weeks.
 
 
